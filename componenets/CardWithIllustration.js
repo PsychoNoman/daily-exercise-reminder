@@ -9,8 +9,12 @@ import {
   useColorModeValue,
   createIcon,
 } from "@chakra-ui/react";
+import MailchimpSubscribe from "react-mailchimp-subscribe";
 
 export default function CardWithIllustration() {
+  const url = process.env.NEXT_PUBLIC_MAILCHIMP_URL;
+  const SimpleForm = () => <MailchimpSubscribe url={url} />;
+
   return (
     <Flex
       minH={"100vh"}
@@ -49,7 +53,7 @@ export default function CardWithIllustration() {
           </center>
         </Stack>
         <Stack spacing={4} direction={{ base: "column", md: "row" }} w={"full"}>
-          <Input
+          {/* <Input
             type={"email"}
             placeholder={"john@doe.net"}
             color={useColorModeValue("gray.800", "gray.200")}
@@ -70,7 +74,29 @@ export default function CardWithIllustration() {
             _focus={{ bg: "blue.500" }}
           >
             Subscribe
-          </Button>
+          </Button> */}
+          <center style={{ position: "relative", marginLeft: "5rem" }}>
+            <MailchimpSubscribe
+              url={url}
+              render={({ subscribe, status, message }) => (
+                <div>
+                  <SimpleForm onSubmitted={(formData) => subscribe(formData)} />
+                  {status === "sending" && (
+                    <div style={{ color: "blue" }}>sending...</div>
+                  )}
+                  {status === "error" && (
+                    <div
+                      style={{ color: "red" }}
+                      dangerouslySetInnerHTML={{ __html: message }}
+                    />
+                  )}
+                  {status === "success" && (
+                    <div style={{ color: "green" }}>Subscribed !</div>
+                  )}
+                </div>
+              )}
+            />
+          </center>
         </Stack>
       </Stack>
     </Flex>
